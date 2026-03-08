@@ -1,12 +1,28 @@
-import cv2, os
-import numpy as np
-import math, time, random
+import cv2, os, math, random, numpy as np
 
 
+response = None
+while response == None or not ("d" in response or "c" in response or "a" in response):
+    print("type 'd' to run the demo")
+    print("type 'c' to continue in default mode")
+    response = input("type 'a' to enter advanced mode\n").lower()
+    if "d" in response:
+        response = None
+        while response == None or not ("1" in response or "2" in response or "3" in response):
+            print("choose demo source image(enter number):")
+            print("1: mona lisa")
+            print("2: abe lincoln")
+            response = input("3: XXXTENTACION\n")
+            run_demo()
+    elif "c" in response:
+        continue
+    elif "a" in response:
+        continue
 blank_size = (100,150)
 overlay_attempts = 25000 # amount of times it attempts to find a good image for it
 overlay_depth = 100 # amount of different image positions it tries
-
+def run_demo():
+    return
 def render_image(output_file_path=None, goal_image=None,blank_size=None,overlay_attempts=None):
     blank_size = (220, 320)
     overlay_attempts = 10000  # amount of times it attempts to find a good image for it
@@ -68,7 +84,7 @@ def render_image(output_file_path=None, goal_image=None,blank_size=None,overlay_
                 concerning_image_paths.insert(0, current_path)
             continue
         # round(overlay_depth/best_scale_factor*10)
-        for image_num in range(35):
+        for image_num in range(overlay_depth):
             random_position_x = random.randint(0, blank_size[1] - overlay_image_size[1]-1)
             random_position_y = random.randint(0, blank_size[0] - overlay_image_size[0]-1)
             base_copy = base_image.copy()
@@ -125,7 +141,7 @@ def render_image(output_file_path=None, goal_image=None,blank_size=None,overlay_
         y_end = image_positions[i][1] * 3 + image_sizes[i][1] * 3
         # 4. Use NumPy slicing to place the 'drawing_image' onto the 'canvas'
         base_image[image_positions[i][1] * 3:y_end, image_positions[i][0] * 3:x_end] = drawing_image
-        cv2.imshow("overlay", base_image)
+        cv2.imshow("overlay", base_image[0:blank_size[1] * 3, 0:blank_size[0] * 3]) # show cropped image to fit dimensions of goal
         cv2.waitKey(10)
     print(concerning_image_paths)
 
