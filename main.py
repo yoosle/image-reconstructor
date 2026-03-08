@@ -2,61 +2,43 @@ import cv2, os, math, random, numpy as np
 
 
 response = None
-while response == None or not ("d" in response or "c" in response or "a" in response):
+while True:
     print("type 'd' to run the demo")
     print("type 'c' to continue in default mode")
-    response = input("type 'a' to enter advanced mode\n").lower()
+    print("type 'a' to enter advanced mode")
+    response = "d" # input("type 'h' for help with configurations\n").lower()
     if "d" in response:
         response = None
         while response == None or not ("1" in response or "2" in response or "3" in response):
-            print("choose demo source image(enter number):")
+            print("choose demo image(enter number):")
             print("1: mona lisa")
             print("2: abe lincoln")
             response = input("3: XXXTENTACION\n")
-            run_demo()
+            if "1" in response:
+                render_image("monalisa_demo.jpg")
+            elif "2" in response:
+                render_image("lincoln_demo.jpg")
+            elif "3" in response:
+                render_image("xxxtentacion_demo.png")
     elif "c" in response:
         continue
     elif "a" in response:
         continue
-blank_size = (100,150)
-overlay_attempts = 25000 # amount of times it attempts to find a good image for it
-overlay_depth = 100 # amount of different image positions it tries
-def run_demo():
-    return
-def render_image(output_file_path=None, goal_image=None,blank_size=None,overlay_attempts=None):
-    blank_size = (220, 320)
-    overlay_attempts = 10000  # amount of times it attempts to find a good image for it
-    overlay_depth = 100
-    goal_image = cv2.imread("C:\\Users\\colin\\Downloads\\monalisa.jpg") # cv2.imread("C:\\Users\\colin\\Downloads\\deathconsciousness.jpg")
-    final_scale_factor = 1 # add this in the future. make it so that the output image is
-    # relatively similar in size to the rescaled one
+    elif "h" in response:
+        continue
 
+def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="output.png",blank_width=100,overlay_attempts=1000, overlay_depth=10):
+    goal_image = cv2.imread(input_file_path)
+    goal_image_ratio = len(goal_image[0]) / len(goal_image) # MAY NEED TO SWAP THESE VALUES
+    blank_size = (blank_width, round(blank_width*goal_image_ratio))
     resized_goal_image = cv2.resize(goal_image,blank_size)
-    cv2.imshow("goal", resized_goal_image)
-    cv2.waitKey(0)
-    overlay_image_paths = ["..\\overlay_images\\" + f for f in os.listdir("..\\overlay_images") if os.path.isfile(os.path.join("..\\overlay_images", f))]
+    overlay_image_paths = ["source_images\\" + f for f in os.listdir("source_images") if os.path.isfile(os.path.join("source_images", f))]
     stuffplaced = 0
     base_image = np.zeros((blank_size[1], blank_size[0], 3), dtype=np.uint8)
-    # make the pixels random colors to encourage new images
+    # make the base image's pixels random colors to encourage new images
     for x in range(blank_size[1]):
         for y in range(blank_size[0]):
             base_image[x,y] = [random.randint(0,255),random.randint(0,255),random.randint(0,255)]
-    # print(len(base_image), len(resized_goal_image))
-    '''for x in range(400):
-        print(x)
-        for y in range(500):
-            if random.randint(0,round(x/10)) == 0:
-                base_image[y, x] = resized_goal_image[y,x]
-            for i in range(250):
-                r = [random.randint(0,255),random.randint(0,255),random.randint(0,255)]
-                goal_pix = resized_goal_image[y,x]
-                base_pix = base_image[y,x]
-                if math.sqrt(math.pow(goal_pix[0]-r[0],2)+math.pow(goal_pix[1]-r[1],2)+math.pow(goal_pix[2]-r[2],2)) > math.sqrt(math.pow(goal_pix[0]-base_pix[0],2)+math.pow(goal_pix[1]-base_pix[1],2)+math.pow(goal_pix[2]-base_pix[2],2)):
-                    base_image[y,x] = r'''
-
-    '''cv2.imshow('show', cv2.resize(base_image, (500,400)))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()'''
     image_positions = []
     image_paths = []
     image_sizes = []
