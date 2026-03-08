@@ -1,43 +1,18 @@
 import cv2, os, math, random, numpy as np
 
-
-response = None
-while True:
-    print("type 'd' to run the demo")
-    print("type 'c' to continue in default mode")
-    print("type 'a' to enter advanced mode")
-    response = "d" # input("type 'h' for help with configurations\n").lower()
-    if "d" in response:
-        response = None
-        while response == None or not ("1" in response or "2" in response or "3" in response):
-            print("choose demo image(enter number):")
-            print("1: mona lisa")
-            print("2: abe lincoln")
-            response = input("3: XXXTENTACION\n")
-            if "1" in response:
-                render_image("monalisa_demo.jpg")
-            elif "2" in response:
-                render_image("lincoln_demo.jpg")
-            elif "3" in response:
-                render_image("xxxtentacion_demo.png")
-    elif "c" in response:
-        continue
-    elif "a" in response:
-        continue
-    elif "h" in response:
-        continue
-
-def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="output.png",blank_width=100,overlay_attempts=1000, overlay_depth=10):
+def render_image(input_file_path="demo_images/xxxtentacion_demo.png", output_file_path="output.png",blank_width=100,overlay_attempts=10000, overlay_depth=1):
     if blank_width > 350:
         print("**blank_width too high. this will take years to render**")
         return
     if overlay_depth > 250:
         print("**overlay_depth too high. this will take years to render**")
-    goal_image = cv2.imread(input_file_path)
+        return
+    goal_image = cv2.imread("demo_images/xxxtentacion_demo.png")
     goal_image_ratio = len(goal_image[0]) / len(goal_image) # MAY NEED TO SWAP THESE VALUES
     blank_size = (blank_width, round(blank_width*goal_image_ratio))
     resized_goal_image = cv2.resize(goal_image,blank_size)
-    overlay_image_paths = ["source_images\\" + f for f in os.listdir("source_images") if os.path.isfile(os.path.join("source_images", f))]
+    overlay_image_paths = ["source_images/jk-sloan-rescaled/" + f for f in os.listdir("source_images/jk-sloan-rescaled")]
+    print(overlay_image_paths)
     stuffplaced = 0
     base_image = np.zeros((blank_size[1], blank_size[0], 3), dtype=np.uint8)
     # make the base image's pixels random colors to encourage new images
@@ -51,16 +26,13 @@ def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="outp
     for attempt in range(overlay_attempts):
         if attempt % 100 == 0:
             print("iteration:", attempt, "images placed:", stuffplaced)
-        if stuffplaced % 5 == 0 or attempt % 500 == 0:
-            cv2.imshow("overlay", base_image)
-            cv2.waitKey(1)
         best_improvement = 0
         best_x = 0
         best_y = 0
         current_path = random.choice(overlay_image_paths)
-        scale_factor = random.randint(5, round(blank_width/100)))
-        if attempt < max(attempts-5000, attempts * 7/10):
-            scale_factor = random.randint(max(10,round(blank_width/30)), max(20,round(blank_width/13)))
+        scale_factor = random.randint(5, max(8,round(blank_width/100)))
+        if attempt < max(overlay_attempts-5000, overlay_attempts * 7/10):
+            scale_factor = random.randint(max(10,max(15,round(blank_width/30))), max(20,round(blank_width/13)))
         overlay_image_pixels = cv2.imread(current_path)
         overlay_image_ratio = len(overlay_image_pixels[0]) / len(overlay_image_pixels)
         overlay_image_size = (round(scale_factor * overlay_image_ratio), round(scale_factor))
@@ -119,5 +91,31 @@ def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="outp
         y_end = image_positions[i][1] * 3 + image_sizes[i][1] * 3
         base_image[image_positions[i][1] * 3:y_end, image_positions[i][0] * 3:x_end] = drawing_image
     cv2.imwrite("output_image.png", base_image[0:blank_size[1] * 3, 0:blank_size[0] * 3])
+    print("final image saved to output_image.png")
 
-render_image()
+render_image("demo_images/xxxtentacion_demo.png")
+
+while True:
+    print("type 'd' to run the demo")
+    print("type 'c' to continue in default mode")
+    print("type 'a' to enter advanced mode")
+    response = "d" # input("type 'h' for help with configurations\n").lower()
+    if "d" in response:
+        response = None
+        while response == None or not ("1" in response or "2" in response or "3" in response):
+            print("choose demo image(enter number):")
+            print("1: mona lisa")
+            print("2: abe lincoln")
+            response = input("3: XXXTENTACION\n")
+            if "1" in response:
+                render_image("demo_images/monalisa_demo.jpg")
+            elif "2" in response:
+                render_image("demo_images/lincoln_demo.jpg")
+            elif "3" in response:
+                render_image("demo_images/xxxtentacion_demo.png")
+    elif "c" in response:
+        continue
+    elif "a" in response:
+        continue
+    elif "h" in response:
+        continue
