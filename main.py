@@ -119,8 +119,5 @@ def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="outp
         y_end = image_positions[i][1] * 3 + image_sizes[i][1] * 3
         base_image[image_positions[i][1] * 3:y_end, image_positions[i][0] * 3:x_end] = drawing_image
     cv2.imwrite("output_image.png", base_image[0:blank_size[1] * 3, 0:blank_size[0] * 3])
-    cv2.waitKey(0)
-
-    cv2.destroyAllWindows()
 
 render_image()
