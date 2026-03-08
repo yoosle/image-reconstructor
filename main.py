@@ -28,6 +28,11 @@ while True:
         continue
 
 def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="output.png",blank_width=100,overlay_attempts=1000, overlay_depth=10):
+    if blank_width > 350:
+        print("**blank_width too high. this will take years to render**")
+        return
+    if overlay_depth > 250:
+        print("**overlay_depth too high. this will take years to render**")
     goal_image = cv2.imread(input_file_path)
     goal_image_ratio = len(goal_image[0]) / len(goal_image) # MAY NEED TO SWAP THESE VALUES
     blank_size = (blank_width, round(blank_width*goal_image_ratio))
@@ -45,7 +50,7 @@ def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="outp
     concerning_image_paths = []
     for attempt in range(overlay_attempts):
         if attempt % 100 == 0:
-            print("iteration:", attempt)
+            print("iteration:", attempt, "images placed:", stuffplaced)
         if stuffplaced % 5 == 0 or attempt % 500 == 0:
             cv2.imshow("overlay", base_image)
             cv2.waitKey(1)
@@ -53,9 +58,9 @@ def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="outp
         best_x = 0
         best_y = 0
         current_path = random.choice(overlay_image_paths)
-        scale_factor = random.randint(10, 12)
-        if attempt < 6000:
-            scale_factor = random.randint(12, 24)
+        scale_factor = random.randint(5, round(blank_width/100)))
+        if attempt < max(attempts-5000, attempts * 7/10):
+            scale_factor = random.randint(max(10,round(blank_width/30)), max(20,round(blank_width/13)))
         overlay_image_pixels = cv2.imread(current_path)
         overlay_image_ratio = len(overlay_image_pixels[0]) / len(overlay_image_pixels)
         overlay_image_size = (round(scale_factor * overlay_image_ratio), round(scale_factor))
@@ -65,7 +70,6 @@ def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="outp
             if not current_path in concerning_image_paths:
                 concerning_image_paths.insert(0, current_path)
             continue
-        # round(overlay_depth/best_scale_factor*10)
         for image_num in range(overlay_depth):
             random_position_x = random.randint(0, blank_size[1] - overlay_image_size[1]-1)
             random_position_y = random.randint(0, blank_size[0] - overlay_image_size[0]-1)
@@ -93,25 +97,17 @@ def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="outp
             image_paths.insert(0, current_path)
             image_sizes.insert(0, overlay_image_size)
             stuffplaced += 1
-            if stuffplaced % 5 == 0:
-                print("images placed:", stuffplaced)
             for offset_x in range(overlay_image_size[0]):
                 for offset_y in range(overlay_image_size[1]):
                     new_pix = overlay_image_pixels[offset_y, offset_x]
                     old_pix = base_image[best_x + offset_y, best_y + offset_x]
                     base_image[best_x + offset_y, best_y + offset_x] = new_pix
-
+    # replace any blank pixels with opaque pixels from the goal image to improve visualization
     for x in range(blank_size[0]):
         for y in range(blank_size[1]):
             if list(base_image[y, x]) == [0,0,0]:
                 base_image[y, x] = resized_goal_image[y, x] / 15
-
-    cv2.imshow('show', cv2.resize(base_image,(blank_size[0]*3,blank_size[1]*3)))
-    cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
-    # cv2.imshow("overlay", cv2.resize(base_image, (blank_size[1] * 12, blank_size[0] * 12)))
-    # create big boy
+    # create big boy (upscaled version)
     image_positions = image_positions[::-1]
     image_paths = image_paths[::-1]
     image_sizes = image_sizes[::-1]
@@ -121,12 +117,8 @@ def render_image(input_file_path="xxxtentacion_demo.png", output_file_path="outp
         drawing_image = cv2.resize(drawing_image, (image_sizes[i][0] * 3, image_sizes[i][1] * 3))
         x_end = image_positions[i][0] * 3 + image_sizes[i][0] * 3
         y_end = image_positions[i][1] * 3 + image_sizes[i][1] * 3
-        # 4. Use NumPy slicing to place the 'drawing_image' onto the 'canvas'
         base_image[image_positions[i][1] * 3:y_end, image_positions[i][0] * 3:x_end] = drawing_image
-        cv2.imshow("overlay", base_image[0:blank_size[1] * 3, 0:blank_size[0] * 3]) # show cropped image to fit dimensions of goal
-        cv2.waitKey(10)
-    print(concerning_image_paths)
-
+    cv2.imwrite("output_image.png", base_image[0:blank_size[1] * 3, 0:blank_size[0] * 3])
     cv2.waitKey(0)
 
     cv2.destroyAllWindows()
